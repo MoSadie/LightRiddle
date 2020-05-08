@@ -45,9 +45,9 @@
                 lights = 100;
             }
 
-            var showNumbers = get("showDetails");
-            if (showNumbers == undefined) {
-                showNumbers = true;
+            var hideNumbers = get("hideDetails");
+            if (hideNumbers == undefined) {
+                hideNumbers = false;
             }
 
             var table = document.getElementById("riddle");
@@ -89,7 +89,7 @@
                 // Create row
                 for (let j = 1; j < state.length; j++) {
                     var rowCell = document.createElement("td");
-                    if (showNumbers) { rowCell.innerText = "(" + i + ", " + j + ")"; }
+                    if (!hideNumbers) { rowCell.innerText = "(" + i + ", " + j + ")"; }
                     if (state[j]) {
                         rowCell.className = "on";
                     } else {
@@ -112,8 +112,8 @@
     <table id="riddle">
     </table>
     <br>
-    <form>Set the number of lights <input type="number" name="lights" /> <br> <input type="checkbox" name="showDetails">
-        Show numbers in cells. <br> <input type="submit" /></form>
+    <form>Set the number of lights <input type="number" name="lights" value="100" /> <br> <input type="checkbox" name="hideDetails">
+        Hide numbers in cells. <br> <input type="submit" /></form>
 </body>
 
 </html>
