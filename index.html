@@ -1,0 +1,119 @@
+<html>
+
+<head>
+    <title>Lightswitch Riddle</title>
+    <style>
+        .on {
+            background-color: green;
+        }
+
+        .off {
+            background-color: orange;
+        }
+
+        div.on,
+        div.off {
+            width: fit-content;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            text-align: center;
+            width: max-content;
+        }
+
+        td {
+            height: 28px;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact;
+        }
+    </style>
+    <script>
+        //Shamelessly stolen from Stack Overflow https://stackoverflow.com/a/831060
+        function get(name) {
+            if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+                return decodeURIComponent(name[1]);
+        }
+
+        function onLoad() {
+            var lights = get("lights");
+            if (isNaN(lights) || !isFinite(lights) || lights < 0) {
+                lights = 100;
+            }
+
+            var showNumbers = get("showDetails");
+            if (showNumbers == undefined) {
+                showNumbers = true;
+            }
+
+            var table = document.getElementById("riddle");
+
+            // Header
+            var header = document.createElement("tr");
+            header.append(document.createElement("th"));
+
+            for (let i = 1; i <= lights; i++) {
+                var cell = document.createElement("th");
+                cell.innerText = i;
+
+                header.append(cell);
+            }
+
+            table.append(header);
+
+            // Setup State
+            var state = [];
+
+            for (let i = 1; i <= lights; i++) {
+                state[i] = false;
+            }
+
+            // The rest of the rows
+
+            for (let i = 1; i <= lights; i++) {
+                var row = document.createElement("tr");
+                var rowBegin = document.createElement("td");
+                rowBegin.innerText = i;
+
+                row.append(rowBegin);
+
+                //Update state
+                for (let j = 0; j < state.length; j += i) {
+                    state[j] = !state[j];
+                }
+
+                // Create row
+                for (let j = 1; j < state.length; j++) {
+                    var rowCell = document.createElement("td");
+                    if (showNumbers) { rowCell.innerText = "(" + i + ", " + j + ")"; }
+                    if (state[j]) {
+                        rowCell.className = "on";
+                    } else {
+                        rowCell.className = "off";
+                    }
+                    row.append(rowCell);
+                }
+                table.append(row)
+            }
+        }
+    </script>
+</head>
+
+<body onload="onLoad()">
+    <h1>Lightswitch Riddle</h1>
+    <h3>Key:<br>Rows: Each step of the process. Columns: Each specific lightswitch.<br>
+        <div class="on">On</div>
+        <div class="off">Off</div>
+    </h3>
+    <table id="riddle">
+    </table>
+    <br>
+    <form>Set the number of lights <input type="number" name="lights" /> <br> <input type="checkbox" name="showDetails">
+        Show numbers in cells. <br> <input type="submit" /></form>
+</body>
+
+</html>
