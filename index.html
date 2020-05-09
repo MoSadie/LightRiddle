@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Lightswitch Riddle</title>
+    <title>Light Switch Riddle</title>
     <style>
         .on {
             background-color: orange;;
@@ -12,7 +12,7 @@
         }
 
         div.on,
-        div.off {
+        div.off { /* Makes it so the color doesn't extend across the whole screen. */
             width: fit-content;
         }
 
@@ -28,7 +28,7 @@
             height: 28px;
         }
 
-        body {
+        body { /* Makes it so you can print the page in color. */
             -webkit-print-color-adjust: exact;
         }
     </style>
@@ -39,7 +39,14 @@
                 return decodeURIComponent(name[1]);
         }
 
+
+        // This is the main function, does all of the brute force calculation. It is run on page load.
+        // Here is the problem we need to solve:
+        // We have some positive number of light switches, and for each number from 1 to the number of light switches, we need to toggle the light switches that are multiples of that number.
+        // And of course, display the result in a visually interesting way.
         function onLoad() {
+            // Get optional parameters from the URL to describe the number of light switches and if we should hide the text in the cells of the table.
+
             var lights = get("lights");
             if (isNaN(lights) || !isFinite(lights) || lights < 0) {
                 lights = 100;
@@ -50,9 +57,10 @@
                 hideNumbers = false;
             }
 
+            // Grabbing the table element so we can add rows to it.
             var table = document.getElementById("riddle");
 
-            // Header
+            // Creating and adding the Header row.
             var header = document.createElement("tr");
             header.append(document.createElement("th"));
 
@@ -65,38 +73,48 @@
 
             table.append(header);
 
-            // Setup State
+            // Create state tracking array. Will be 1 longer than the number of light switches, so that we can count the light switches from 1 instead of 0.
             var state = [];
-
+            
             for (let i = 1; i <= lights; i++) {
                 state[i] = false;
             }
 
-            // The rest of the rows
+            // Creating the rest of the rows.
 
+            // For each number from 1 to the number of light switches (inclusive)
             for (let i = 1; i <= lights; i++) {
+                // Create the row and the first cell in the row.
                 var row = document.createElement("tr");
                 var rowBegin = document.createElement("td");
                 rowBegin.innerText = i;
 
                 row.append(rowBegin);
 
-                //Update state
+                // Update state (aka flip the correct light switches)
+                // Counts from 0 in multiples of i up to the last multiple under the number of light switches.
                 for (let j = 0; j < state.length; j += i) {
-                    state[j] = !state[j];
+                    state[j] = !state[j]; // Flip the light switch.
                 }
 
-                // Create row
+                // Finish creating the row using the new state and add it to the table.
+                // Starting at 1 since it's the first light switch. (There is no 0th light switch)
                 for (let j = 1; j < state.length; j++) {
+                    // Create the cell
                     var rowCell = document.createElement("td");
+                    // Add the optional text
                     if (!hideNumbers) { rowCell.innerText = "(" + i + ", " + j + ")"; }
+
+                    // Color the cell
                     if (state[j]) {
                         rowCell.className = "on";
                     } else {
                         rowCell.className = "off";
                     }
+                    // Append the cell to the row.
                     row.append(rowCell);
                 }
+                // Append the row to the table.
                 table.append(row)
             }
         }
@@ -105,7 +123,8 @@
 
 <body onload="onLoad()">
     <h1>Lightswitch Riddle</h1>
-    <h3>Key:<br>Rows: Each step of the process. Columns: Each specific lightswitch.<br>
+    <h3>Key:<br>
+        Rows: Each step of the process. Columns: Each specific lightswitch.<br>
         <div class="on">On</div>
         <div class="off">Off</div>
     </h3>
@@ -113,7 +132,8 @@
     </table>
     <br>
     <form>Set the number of lights <input type="number" name="lights" value="100" /> <br> <input type="checkbox" name="hideDetails">
-        Hide numbers in cells. <br> <input type="submit" /></form>
+        Hide numbers in cells. <br> <input type="submit" /></form><br>
+    <p>View the source code <a href="https://github.com/MoSadie/LightRiddle" target="_blank">on GitHub</a></p>
 </body>
 
 </html>
